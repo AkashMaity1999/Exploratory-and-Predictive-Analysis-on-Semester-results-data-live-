@@ -1,0 +1,23 @@
+#multinomial logit model
+library(nnet)
+getwd()
+setwd("C:/Users/Akash/Desktop")
+df<- read.csv("me.csv",header=TRUE)
+y<-as.factor(df$y)
+#dividing the data into train data and test data
+index<-sample(c(0,1), nrow(df), prob = c(0.8,0.2), replace = T)
+train_data<-df[index == 0,]
+dim(train_data)
+test_data<-df[index == 1,]
+dim(test_data)
+#logistic model
+model<-multinom(y~x1+x2.A+x2.FN+x2.N+x3,,order=TRUE,data=train_data)
+summary(model)
+#p value
+z<-summary(model)$coefficients/summary(model)$standard.errors
+p<-(1-pnorm(abs(z),0,1))*2
+p
+ynew<-predict(model,newdata=test_data,type='class')
+#confusion matrix
+t<-table(test_data$y,ynew)
+sum(diag(t))/sum(t)
